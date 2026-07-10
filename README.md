@@ -1,4 +1,4 @@
-﻿# Haruk Unity GameKit
+﻿# harookie Unity GameKit
 
 Reusable Unity gameplay infrastructure and UI helpers.
 
