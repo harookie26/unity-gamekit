@@ -54,4 +54,3 @@ Full system docs live in [`Documentation~/index.md`](Documentation~/index.md).
 - [`Spatial`](Documentation~/spatial.md)
 - [`Debug Tools`](Documentation~/debug-tools.md)
 - [`Editor`](Documentation~/editor.md)
-- [`Changelog Maintenance`](Documentation~/changelog-maintenance.md)
