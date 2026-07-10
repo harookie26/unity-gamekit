@@ -15,7 +15,7 @@ Use these sections only when they contain entries:
 - `Deprecated`: features still present but planned for removal.
 - `Security`: security-sensitive fixes.
 
-## Entry Style
+## Entry Styles
 
 Use short, user-facing sentences.
 
