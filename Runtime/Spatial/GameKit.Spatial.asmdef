@@ -1,0 +1,16 @@
+{
+  "name": "GameKit.Spatial",
+  "rootNamespace": "GameKit.Spatial",
+  "references": [
+    "GameKit.Interaction"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
