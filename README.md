@@ -4,13 +4,18 @@ Reusable Unity gameplay infrastructure and UI helpers.
 
 ## Install
 
-Use Unity Package Manager with a local path while developing:
+Install through Unity Package Manager using the Git URL:
 
-```json
-"com.harookie.unity-gamekit": "file:D:/GitHub/source/repos/unity-gamekit"
+1. In Unity, open `Window > Package Manager`.
+2. Click `+`.
+3. Select `Add package from git URL...`.
+4. Enter:
+
+```text
+https://github.com/harookie26/unity-gamekit.git#v0.1.1
 ```
 
-Use a Git URL once this repo is pushed:
+To install through `Packages/manifest.json`, add:
 
 ```json
 "com.harookie.unity-gamekit": "https://github.com/harookie26/unity-gamekit.git#v0.1.1"
@@ -36,8 +41,17 @@ Use a Git URL once this repo is pushed:
 - Spatial: trigger volumes, spatial SFX playback, target filtering, runtime lookup, and saveable active state.
 - Debug tools: FPS/resolution/scene overlay and build version labels.
 
-## Changelog Maintenance
+## Documentation
 
-- Add user-facing changes under `CHANGELOG.md` > `[Unreleased]` in the same commit as the code change.
-- Use `Added`, `Changed`, `Fixed`, `Removed`, `Deprecated`, and `Security` sections only when they contain entries.
-- When releasing, rename `[Unreleased]` to `[x.y.z] - YYYY-MM-DD`, bump `package.json`, tag the same version, then add a fresh empty `[Unreleased]`.
+Full system docs live in [`Documentation~/index.md`](Documentation~/index.md).
+
+- [`Core`](Documentation~/core.md)
+- [`Events`](Documentation~/events.md)
+- [`Interaction`](Documentation~/interaction.md)
+- [`Navigation`](Documentation~/navigation.md)
+- [`UI`](Documentation~/ui.md)
+- [`Dialogue`](Documentation~/dialogue.md)
+- [`Spatial`](Documentation~/spatial.md)
+- [`Debug Tools`](Documentation~/debug-tools.md)
+- [`Editor`](Documentation~/editor.md)
+- [`Changelog Maintenance`](Documentation~/changelog-maintenance.md)
