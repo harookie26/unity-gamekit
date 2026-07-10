@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+- Added robust per-system documentation under `Documentation~`.
 - Added core helpers for scene loading, runtime registries, cutscene gating, and foldable inspector attributes.
 - Added event bus helpers with optional payload values.
 - Added interaction and level contracts for reusable gameplay systems.
