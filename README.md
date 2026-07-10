@@ -13,7 +13,7 @@ Use Unity Package Manager with a local path while developing:
 Use a Git URL once this repo is pushed:
 
 ```json
-"com.harookie.unity-gamekit": "https://github.com/harookie26/unity-gamekit.git#v0.1.0"
+"com.harookie.unity-gamekit": "https://github.com/harookie26/unity-gamekit.git#v0.1.1"
 ```
 
 ## Namespaces
