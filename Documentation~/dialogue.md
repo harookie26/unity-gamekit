@@ -11,6 +11,7 @@ Requires TextMeshPro.
 - `DialogueManager`: scene manager for queued playback and voiced sequences.
 - `DialogueLabel`: visual label prefab component.
 - `DialogueEntry`: ScriptableObject for one dialogue line.
+- `DialogueSequence`: ScriptableObject containing an ordered list of dialogue entries.
 - `VoicedDialogueEntry`: dialogue line with an `AudioClip`.
 - `VoicedDialogueSequence`: ScriptableObject containing one voice clip and timed subtitle lines.
 - `DialoguePlaybackHandle`: completion/interruption status for sequence playback.
@@ -84,6 +85,27 @@ If the asset is a `VoicedDialogueEntry`, its `voiceLine` controls the display du
 
 ## Display a Sequence of Entries
 
+Create an asset from `Assets > Create > GameKit > Dialogue > Dialogue Sequence`, add entries in playback order, then reference the sequence as one asset:
+
+```csharp
+using GameKit.Dialogue;
+using UnityEngine;
+
+public sealed class ConversationPlayer : MonoBehaviour
+{
+    [SerializeField] private DialogueSequence sequence;
+
+    public DialoguePlaybackHandle Play()
+    {
+        return DialogueManager.Instance.DisplaySequence(sequence);
+    }
+}
+```
+
+A sequence may mix `DialogueEntry` and `VoicedDialogueEntry` assets. Each voiced entry uses its own clip for that line.
+
+For sequences assembled dynamically at runtime, pass an enumerable directly:
+
 ```csharp
 using System.Collections.Generic;
 using GameKit.Dialogue;
@@ -101,6 +123,17 @@ public sealed class ConversationPlayer : MonoBehaviour
 ```
 
 `DisplaySequence(IEnumerable<DialogueEntry>)` stops current dialogue, clears the queue, queues the provided entries, and returns a handle.
+
+## Dialogue Starter Sample
+
+Import `Dialogue Starter` from the package's Samples tab in Package Manager. It includes:
+
+- A configured `Dialogue Canvas` prefab with `DialogueManager` and an `AudioSource`.
+- A reusable `Dialogue Label` prefab with TMP name and body text.
+- An example `DialogueSequence` and its dialogue entries.
+- An `Example Dialogue Player` prefab that plays the sequence on startup.
+
+Drag `Dialogue Canvas` and `Example Dialogue Player` into a scene, then enter Play mode.
 
 ## Timed Voiced Sequence
 

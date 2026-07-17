@@ -12,7 +12,7 @@ Install through Unity Package Manager using the Git URL:
 4. Enter:
 
 ```text
-https://github.com/harookie26/unity-gamekit.git#v0.1.1
+https://github.com/harookie26/unity-gamekit.git#master
 ```
 
 To install through `Packages/manifest.json`, add:

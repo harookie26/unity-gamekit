@@ -157,6 +157,11 @@ namespace GameKit.Dialogue
             return handle;
         }
 
+        public DialoguePlaybackHandle DisplaySequence(DialogueSequence sequence)
+        {
+            return DisplaySequence(sequence != null ? sequence.entries : null);
+        }
+
         public DialoguePlaybackHandle DisplaySequence(VoicedDialogueSequence sequence)
         {
             DialoguePlaybackHandle handle = new();
