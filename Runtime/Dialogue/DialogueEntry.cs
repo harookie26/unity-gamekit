@@ -3,7 +3,7 @@ using UnityEngine;
 namespace GameKit.Dialogue
 {
     [CreateAssetMenu(fileName = "DialogueEntry", menuName = "GameKit/Dialogue/Dialogue Entry")]
-    public class DialogueEntry : ScriptableObject
+    public class DialogueEntry : DialogueAsset
     {
         [Tooltip("Character name shown with this dialogue line.")]
         public string characterName = "";

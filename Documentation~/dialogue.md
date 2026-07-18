@@ -8,7 +8,9 @@ Requires TextMeshPro.
 
 ## Types
 
+- `DialogueAsset`: shared base type accepted by unified playback fields and APIs.
 - `DialogueManager`: scene manager for queued playback and voiced sequences.
+- `DialoguePlayer`: reusable component that plays any `DialogueAsset` from one Inspector field.
 - `DialogueLabel`: visual label prefab component.
 - `DialogueEntry`: ScriptableObject for one dialogue line.
 - `DialogueSequence`: ScriptableObject containing an ordered list of dialogue entries.
@@ -41,6 +43,34 @@ The label fades in, holds, then fades out using unscaled time.
 5. Assign an `AudioSource` if using voice playback, or place an `AudioSource` on the same object.
 
 Only one `DialogueManager` should exist at runtime. The first instance becomes `DialogueManager.Instance`; duplicates destroy themselves.
+
+## Unified Playback
+
+For the simplest setup, add `DialoguePlayer` to a GameObject and assign any supported asset to its `Dialogue` field:
+
+- `DialogueEntry`
+- `VoicedDialogueEntry`
+- `DialogueSequence`
+- `VoicedDialogueSequence`
+
+Enable `Play On Start`, call the component's public `Play()` method from a UnityEvent, or use the unified manager API:
+
+```csharp
+using GameKit.Dialogue;
+using UnityEngine;
+
+public sealed class DialogueTrigger : MonoBehaviour
+{
+    [SerializeField] private DialogueAsset dialogue;
+
+    public void Play()
+    {
+        DialogueManager.Instance.Play(dialogue);
+    }
+}
+```
+
+The serialized field does not need to change when switching between dialogue types. `Play` returns a `DialoguePlaybackHandle` when called directly on the manager.
 
 ## Display One Line
 
@@ -131,7 +161,7 @@ Import `Dialogue Starter` from the package's Samples tab in Package Manager. It 
 - A configured `Dialogue Canvas` prefab with `DialogueManager` and an `AudioSource`.
 - A reusable `Dialogue Label` prefab with TMP name and body text.
 - An example `DialogueSequence` and its dialogue entries.
-- An `Example Dialogue Player` prefab that plays the sequence on startup.
+- An `Example Dialogue Player` prefab with one field that accepts every dialogue asset type.
 
 Drag `Dialogue Canvas` and `Example Dialogue Player` into a scene, then enter Play mode.
 

@@ -35,6 +35,28 @@ namespace GameKit.Dialogue
         private bool isPlaying;
         private bool isReady;
 
+        public DialoguePlaybackHandle Play(DialogueAsset dialogue)
+        {
+            switch (dialogue)
+            {
+                case DialogueEntry entry:
+                    return DisplaySequence(new[] { entry });
+                case DialogueSequence sequence:
+                    return DisplaySequence(sequence);
+                case VoicedDialogueSequence voicedSequence:
+                    return DisplaySequence(voicedSequence);
+                case null:
+                    DialoguePlaybackHandle emptyHandle = new();
+                    emptyHandle.Complete();
+                    return emptyHandle;
+                default:
+                    DialoguePlaybackHandle unsupportedHandle = new();
+                    unsupportedHandle.Interrupt();
+                    Debug.LogError($"Unsupported dialogue asset type: {dialogue.GetType().Name}.", dialogue);
+                    return unsupportedHandle;
+            }
+        }
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
