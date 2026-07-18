@@ -22,7 +22,7 @@ namespace GameKit.Dialogue
     }
 
     [CreateAssetMenu(fileName = "VoicedDialogueSequence", menuName = "GameKit/Dialogue/Voiced Dialogue Sequence")]
-    public sealed class VoicedDialogueSequence : ScriptableObject
+    public sealed class VoicedDialogueSequence : DialogueAsset
     {
         public AudioClip voiceClip;
         public List<TimedDialogueLine> lines = new();

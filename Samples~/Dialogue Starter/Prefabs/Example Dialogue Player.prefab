@@ -37,8 +37,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35a9be8d8cf34b9f899c765a4a197d52, type: 3}
+  m_Script: {fileID: 11500000, guid: 428f0c9bd5d84428b4aa429a252080a6, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::GameKit.Samples.Dialogue.DialogueSequencePlayer
-  sequence: {fileID: 11400000, guid: 34f2ee32913b4f00911c164ddfd78755, type: 2}
+  m_EditorClassIdentifier: GameKit.Dialogue::GameKit.Dialogue.DialoguePlayer
+  dialogue: {fileID: 11400000, guid: 34f2ee32913b4f00911c164ddfd78755, type: 2}
   playOnStart: 1

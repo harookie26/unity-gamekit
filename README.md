@@ -41,6 +41,27 @@ To install through `Packages/manifest.json`, add:
 - Spatial: trigger volumes, spatial SFX playback, target filtering, runtime lookup, and saveable active state.
 - Debug tools: FPS/resolution/scene overlay and build version labels.
 
+## Dialogue Script Usage
+
+Add a `DialogueManager` to the scene, then reference any dialogue asset through the shared `DialogueAsset` type:
+
+```csharp
+using GameKit.Dialogue;
+using UnityEngine;
+
+public sealed class DialogueTrigger : MonoBehaviour
+{
+    [SerializeField] private DialogueAsset dialogue;
+
+    public void Play()
+    {
+        DialogueManager.Instance.Play(dialogue);
+    }
+}
+```
+
+The same field accepts a `DialogueEntry`, `VoicedDialogueEntry`, `DialogueSequence`, or `VoicedDialogueSequence`. The public `Play()` method can also be connected to a Button, trigger, or other UnityEvent.
+
 ## Documentation
 
 Full system docs live in [`Documentation~/index.md`](Documentation~/index.md).

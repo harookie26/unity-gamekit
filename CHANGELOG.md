@@ -9,6 +9,7 @@
 - Added interaction and level contracts for reusable gameplay systems.
 - Added TMP dialogue labels, queued dialogue playback, voiced dialogue entries, and timed voiced sequences.
 - Added reusable non-voiced dialogue sequence assets and an importable Dialogue Starter sample.
+- Added unified `DialogueAsset` playback and a reusable `DialoguePlayer` component.
 - Added spatial triggers and spatial SFX components with saveable active state.
 - Added debug overlay and build version label components.
 - Added editor support for foldable component inspectors.
