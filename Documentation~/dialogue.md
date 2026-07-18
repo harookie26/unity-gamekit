@@ -162,8 +162,9 @@ Import `Dialogue Starter` from the package's Samples tab in Package Manager. It 
 - A reusable `Dialogue Label` prefab with TMP name and body text.
 - An example `DialogueSequence` and its dialogue entries.
 - An `Example Dialogue Player` prefab with one field that accepts every dialogue asset type.
+- A ready-to-play `Dialogue Demo` scene containing the complete prefab setup.
 
-Drag `Dialogue Canvas` and `Example Dialogue Player` into a scene, then enter Play mode.
+Open `Scenes/Dialogue Demo`, then enter Play mode. The example sequence plays automatically.
 
 ## Timed Voiced Sequence
 

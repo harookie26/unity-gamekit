@@ -4,9 +4,13 @@ This sample provides a ready-to-use dialogue canvas, label, non-voiced sequence,
 
 ## Try the sample
 
-1. Drag `Prefabs/Dialogue Canvas` into an open scene.
-2. Drag `Prefabs/Example Dialogue Player` into the same scene.
-3. Enter Play mode. The example sequence plays automatically.
+1. Open `Scenes/Dialogue Demo`.
+2. Enter Play mode.
+3. The included two-line sequence plays automatically.
+
+The demo scene contains the complete working setup: a camera with an audio listener, the configured `Dialogue Canvas` prefab, and the `Example Dialogue Player` prefab.
+
+To use the prefabs in another scene, drag `Prefabs/Dialogue Canvas` and `Prefabs/Example Dialogue Player` into it.
 
 The Dialogue Canvas prefab already contains a configured `DialogueManager`, `AudioSource`, dialogue container, and label prefab reference. Keep only one active `DialogueManager` in a scene.
 
