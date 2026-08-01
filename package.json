@@ -15,7 +15,7 @@
   "samples": [
     {
       "displayName": "Dialogue Starter",
-      "description": "Ready-to-use dialogue prefabs, mixed sequence, universal player, and demo scene.",
+      "description": "Ready-to-use linear and branching dialogue prefabs, choice UI, multi-event outcomes, and playable demo scenes.",
       "path": "Samples~/Dialogue Starter"
     }
   ]

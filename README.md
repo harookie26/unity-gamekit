@@ -37,7 +37,7 @@ To install through `Packages/manifest.json`, add:
 - Core helpers: scene loading, runtime registries, cutscene gating, and foldable inspector attributes.
 - Events: lightweight local and global event bus helpers with typed payload values.
 - Interaction: shared contracts for interactables, collectibles, channeling, saveable objects, rooms, and stairs.
-- Dialogue: TMP dialogue labels, queued dialogue playback, voiced dialogue entries, and timed voiced sequences.
+- Dialogue: TMP dialogue labels, queued and voiced playback, branching player responses, and extensible gameplay outcomes.
 - Spatial: trigger volumes, spatial SFX playback, target filtering, runtime lookup, and saveable active state.
 - Debug tools: FPS/resolution/scene overlay and build version labels.
 
@@ -60,7 +60,7 @@ public sealed class DialogueTrigger : MonoBehaviour
 }
 ```
 
-The same field accepts a `DialogueEntry`, `VoicedDialogueEntry`, `DialogueSequence`, or `VoicedDialogueSequence`. The public `Play()` method can also be connected to a Button, trigger, or other UnityEvent.
+The same field accepts a `DialogueEntry`, `VoicedDialogueEntry`, `DialogueSequence`, `VoicedDialogueSequence`, or `BranchingDialogue`. The public `Play()` method can also be connected to a Button, trigger, or other UnityEvent.
 
 ## Documentation
 

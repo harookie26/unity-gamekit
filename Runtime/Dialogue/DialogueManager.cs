@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace GameKit.Dialogue
         [SerializeField] private DialogueLabel labelPrefab;
         [SerializeField] private int initialPool = 2;
         [SerializeField] private AudioSource voiceAudioSource;
+        [SerializeField] private DialogueChoicePresenter choicePresenter;
 
         private struct DialogueRequest
         {
@@ -31,9 +33,13 @@ namespace GameKit.Dialogue
         private DialogueRequest currentRequest;
         private Coroutine finishCoroutine;
         private Coroutine sequenceCoroutine;
+        private Coroutine branchingCoroutine;
         private DialoguePlaybackHandle activeSequenceHandle;
+        private DialoguePlaybackHandle activeBranchingHandle;
         private bool isPlaying;
         private bool isReady;
+
+        public event Action<BranchingDialogue, DialogueResponse, int> ResponseSelected;
 
         public DialoguePlaybackHandle Play(DialogueAsset dialogue)
         {
@@ -45,6 +51,8 @@ namespace GameKit.Dialogue
                     return DisplaySequence(sequence);
                 case VoicedDialogueSequence voicedSequence:
                     return DisplaySequence(voicedSequence);
+                case BranchingDialogue branchingDialogue:
+                    return DisplayBranching(branchingDialogue);
                 case null:
                     DialoguePlaybackHandle emptyHandle = new();
                     emptyHandle.Complete();
@@ -138,6 +146,11 @@ namespace GameKit.Dialogue
 
         public DialoguePlaybackHandle DisplaySequence(IEnumerable<DialogueEntry> entries)
         {
+            return DisplaySequence(entries, true);
+        }
+
+        private DialoguePlaybackHandle DisplaySequence(IEnumerable<DialogueEntry> entries, bool stopCurrent)
+        {
             DialoguePlaybackHandle handle = new();
             if (!EnsureReady())
             {
@@ -151,8 +164,10 @@ namespace GameKit.Dialogue
                 return handle;
             }
 
-            StopCurrentDialogue();
-            queue.Clear();
+            if (stopCurrent)
+                StopCurrentDialogue();
+            else
+                StopPresentation();
 
             foreach (DialogueEntry entry in entries)
             {
@@ -186,6 +201,11 @@ namespace GameKit.Dialogue
 
         public DialoguePlaybackHandle DisplaySequence(VoicedDialogueSequence sequence)
         {
+            return DisplaySequence(sequence, true);
+        }
+
+        private DialoguePlaybackHandle DisplaySequence(VoicedDialogueSequence sequence, bool stopCurrent)
+        {
             DialoguePlaybackHandle handle = new();
             if (!EnsureReady())
             {
@@ -199,13 +219,60 @@ namespace GameKit.Dialogue
                 return handle;
             }
 
-            StopCurrentDialogue();
+            if (stopCurrent)
+                StopCurrentDialogue();
+            else
+                StopPresentation();
+
             activeSequenceHandle = handle;
             sequenceCoroutine = StartCoroutine(PlayVoicedSequence(sequence, handle));
             return handle;
         }
 
+        public DialoguePlaybackHandle DisplayBranching(BranchingDialogue conversation)
+        {
+            DialoguePlaybackHandle handle = new();
+            if (!EnsureReady())
+            {
+                handle.Interrupt();
+                return handle;
+            }
+
+            if (conversation == null)
+            {
+                handle.Complete();
+                return handle;
+            }
+
+            if (choicePresenter == null || !choicePresenter.CanPresent)
+            {
+                Debug.LogError("Branching dialogue requires a configured DialogueChoicePresenter.", this);
+                handle.Interrupt();
+                return handle;
+            }
+
+            StopCurrentDialogue();
+            activeBranchingHandle = handle;
+            branchingCoroutine = StartCoroutine(RunBranching(conversation, handle));
+            return handle;
+        }
+
         public void StopCurrentDialogue()
+        {
+            if (branchingCoroutine != null)
+            {
+                StopCoroutine(branchingCoroutine);
+                branchingCoroutine = null;
+            }
+
+            choicePresenter?.Hide();
+            StopPresentation();
+
+            activeBranchingHandle?.Interrupt();
+            activeBranchingHandle = null;
+        }
+
+        private void StopPresentation()
         {
             if (sequenceCoroutine != null)
             {
@@ -241,6 +308,107 @@ namespace GameKit.Dialogue
             currentRequest = default;
             queue.Clear();
             isPlaying = false;
+        }
+
+        internal IEnumerator PlayAsOutcome(DialogueAsset dialogue)
+        {
+            if (dialogue == null)
+                yield break;
+
+            if (dialogue is BranchingDialogue branchingDialogue)
+            {
+                DialoguePlaybackHandle nestedHandle = new();
+                yield return RunBranching(branchingDialogue, nestedHandle);
+                yield break;
+            }
+
+            DialoguePlaybackHandle handle = PlayWithoutStopping(dialogue);
+            while (!handle.IsComplete)
+                yield return null;
+        }
+
+        private DialoguePlaybackHandle PlayWithoutStopping(DialogueAsset dialogue)
+        {
+            switch (dialogue)
+            {
+                case DialogueEntry entry:
+                    return DisplaySequence(new[] { entry }, false);
+                case DialogueSequence sequence:
+                    return DisplaySequence(sequence != null ? sequence.entries : null, false);
+                case VoicedDialogueSequence voicedSequence:
+                    return DisplaySequence(voicedSequence, false);
+                default:
+                    DialoguePlaybackHandle handle = new();
+                    handle.Interrupt();
+                    Debug.LogError($"Unsupported dialogue outcome asset type: {dialogue.GetType().Name}.", dialogue);
+                    return handle;
+            }
+        }
+
+        private IEnumerator RunBranching(BranchingDialogue conversation, DialoguePlaybackHandle handle)
+        {
+            if (conversation.prompt != null)
+                yield return PlayAsOutcome(conversation.prompt);
+
+            if (handle.WasInterrupted)
+                yield break;
+
+            if (conversation.responses == null || conversation.responses.Count == 0)
+            {
+                handle.Complete();
+                FinishBranching(handle);
+                yield break;
+            }
+
+            int selectedIndex = -1;
+            choicePresenter.Show(conversation.responses, index => selectedIndex = index);
+            if (choicePresenter.PresentedChoiceCount == 0)
+            {
+                Debug.LogWarning($"Branching dialogue '{conversation.name}' has no presentable responses.", conversation);
+                handle.Complete();
+                FinishBranching(handle);
+                yield break;
+            }
+
+            while (selectedIndex < 0)
+                yield return null;
+
+            choicePresenter.Hide();
+            if (selectedIndex >= conversation.responses.Count)
+            {
+                handle.Interrupt();
+                FinishBranching(handle);
+                yield break;
+            }
+
+            DialogueResponse response = conversation.responses[selectedIndex];
+            handle.SelectResponse(selectedIndex);
+            ResponseSelected?.Invoke(conversation, response, selectedIndex);
+
+            if (handle.WasInterrupted)
+                yield break;
+
+            if (response?.outcomes != null)
+            {
+                DialogueOutcomeContext context = new(this, conversation, response, selectedIndex);
+                foreach (DialogueOutcome outcome in response.outcomes)
+                {
+                    if (outcome != null)
+                        yield return outcome.Execute(context);
+                }
+            }
+
+            handle.Complete();
+            FinishBranching(handle);
+        }
+
+        private void FinishBranching(DialoguePlaybackHandle handle)
+        {
+            if (activeBranchingHandle != handle)
+                return;
+
+            branchingCoroutine = null;
+            activeBranchingHandle = null;
         }
 
         private void ProcessQueue()

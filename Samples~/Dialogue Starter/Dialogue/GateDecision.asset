@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5ab3034093d44676b53e8eb2f942d89b, type: 3}
+  m_Name: GateDecision
+  m_EditorClassIdentifier: GameKit.Dialogue::GameKit.Dialogue.BranchingDialogue
+  prompt: {fileID: 11400000, guid: 160b96754ebf4995a46f59d1db995f68, type: 2}
+  responses:
+  - text: Ask the gatekeeper for permission.
+    description: Resolve the encounter peacefully and gain a key.
+    outcomes:
+    - {fileID: 11400000, guid: b11423fbbaeb44b89d85a24d987b1633, type: 2}
+    - {fileID: 11400000, guid: 5fb7ea23591a4d75b6eeed4a8118d37d, type: 2}
+  - text: Force the gate open.
+    description: Enter immediately, but alert the guards and damage the gate.
+    outcomes:
+    - {fileID: 11400000, guid: 03014442d8924893bd0f9c649166a5a3, type: 2}
+    - {fileID: 11400000, guid: 49257565a3ea429e9c947dc6842211aa, type: 2}

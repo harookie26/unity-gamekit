@@ -11,6 +11,10 @@
 - Added reusable non-voiced dialogue sequence assets and an importable Dialogue Starter sample.
 - Added unified `DialogueAsset` playback and a reusable `DialoguePlayer` component.
 - Added a ready-to-play dialogue demo scene to the Dialogue Starter sample.
+- Added branching dialogue responses with ordered, extensible outcome chains.
+- Added built-in follow-up dialogue, delay, and multi-event outcomes with typed payloads.
+- Added a choice presenter and event-to-UnityEvent relay for designer-authored conversations.
+- Added a playable branching dialogue sample scene, response UI prefab, outcome assets, and end-user walkthrough.
 - Added spatial triggers and spatial SFX components with saveable active state.
 - Added debug overlay and build version label components.
 - Added editor support for foldable component inspectors.

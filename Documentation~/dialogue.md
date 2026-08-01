@@ -2,7 +2,7 @@
 
 Namespace: `GameKit.Dialogue`
 
-The Dialogue system displays TMP subtitle/dialogue labels, queues dialogue lines, supports individual voiced lines, and can sync subtitle lines to a single voiced sequence clip.
+The Dialogue system displays TMP subtitle/dialogue labels, queues dialogue lines, supports individual voiced lines, syncs subtitles to voice clips, and runs branching conversations with extensible gameplay outcomes.
 
 Requires TextMeshPro.
 
@@ -16,6 +16,10 @@ Requires TextMeshPro.
 - `DialogueSequence`: ScriptableObject containing an ordered list of dialogue entries.
 - `VoicedDialogueEntry`: dialogue line with an `AudioClip`.
 - `VoicedDialogueSequence`: ScriptableObject containing one voice clip and timed subtitle lines.
+- `BranchingDialogue`: prompt, player responses, and ordered outcome lists.
+- `DialogueChoicePresenter`: response-button UI used by branching dialogue.
+- `DialogueOutcome`: extensible ScriptableObject base for effects caused by a response.
+- `DialogueEventRelay`: connects named dialogue outcome events to scene UnityEvents.
 - `DialoguePlaybackHandle`: completion/interruption status for sequence playback.
 - `TMPTextAnimator`: typewriter or fade-in animation helper for a TMP text component.
 
@@ -52,6 +56,7 @@ For the simplest setup, add `DialoguePlayer` to a GameObject and assign any supp
 - `VoicedDialogueEntry`
 - `DialogueSequence`
 - `VoicedDialogueSequence`
+- `BranchingDialogue`
 
 Enable `Play On Start`, call the component's public `Play()` method from a UnityEvent, or use the unified manager API:
 
@@ -71,6 +76,57 @@ public sealed class DialogueTrigger : MonoBehaviour
 ```
 
 The serialized field does not need to change when switching between dialogue types. `Play` returns a `DialoguePlaybackHandle` when called directly on the manager.
+
+## Branching Dialogue and Outcomes
+
+Add a `DialogueChoicePresenter` to a UI object, assign a response container and a Button prefab containing a TMP label, then assign the presenter to `DialogueManager.Choice Presenter`.
+
+Create a branching asset from `Assets > Create > GameKit > Dialogue > Branching Dialogue`:
+
+1. Assign any dialogue asset as the optional prompt.
+2. Add the responses shown to the player.
+3. Add any number of outcome assets to each response. Outcomes run in list order.
+
+Built-in outcomes are created under `Assets > Create > GameKit > Dialogue > Outcomes`:
+
+- `Play Dialogue` plays any dialogue asset and waits for it, including another branching conversation.
+- `Publish Events` publishes multiple named events with string, integer, float, and boolean payload values.
+- `Delay` pauses the outcome chain using scaled or unscaled time.
+
+The result remains compatible with the unified playback API:
+
+```csharp
+DialoguePlaybackHandle handle = DialogueManager.Instance.Play(branchingDialogue);
+while (!handle.IsComplete)
+    yield return null;
+
+if (!handle.WasInterrupted)
+    Debug.Log($"Selected response {handle.SelectedResponseIndex}");
+```
+
+Every published event automatically includes `responseIndex` and `responseText`. Add `DialogueEventRelay` to a scene object to bind event names to parameterless or payload-aware UnityEvents without writing a listener component. Code can also subscribe through `GlobalEventBus`.
+
+For project-specific behavior, derive a ScriptableObject from `DialogueOutcome`. This example unlocks a quest system and can be mixed with every built-in outcome:
+
+```csharp
+using System.Collections;
+using GameKit.Dialogue;
+using UnityEngine;
+
+[CreateAssetMenu(menuName = "Game/Dialogue Outcomes/Unlock Quest")]
+public sealed class UnlockQuestOutcome : DialogueOutcome
+{
+    [SerializeField] private string questId;
+
+    public override IEnumerator Execute(DialogueOutcomeContext context)
+    {
+        QuestManager.Unlock(questId);
+        yield break;
+    }
+}
+```
+
+`DialogueManager.ResponseSelected` is also available when code needs immediate notification of the chosen conversation, response, and index.
 
 ## Display One Line
 
@@ -163,8 +219,11 @@ Import `Dialogue Starter` from the package's Samples tab in Package Manager. It 
 - An example `DialogueSequence` and its dialogue entries.
 - An `Example Dialogue Player` prefab with one field that accepts every dialogue asset type.
 - A ready-to-play `Dialogue Demo` scene containing the complete prefab setup.
+- A `Branching Dialogue Demo` scene with choice UI, two response paths, multi-event gameplay outcomes, and visible UnityEvent reactions.
 
 Open `Scenes/Dialogue Demo`, then enter Play mode. The example sequence plays automatically.
+
+Open `Scenes/Branching Dialogue Demo` to try the choice-and-outcome workflow. See the sample README for an asset-by-asset walkthrough and event listener examples.
 
 ## Timed Voiced Sequence
 
@@ -228,4 +287,5 @@ animator.PlayFadeInWhole("Objective complete.", 0.5f);
 - Use unscaled-time behavior intentionally. Dialogue still displays while `Time.timeScale` is zero.
 - Keep timed sequence line times sorted by `startTime`.
 - Use `DialoguePlaybackHandle` for flow control instead of guessing durations.
+- Keep outcome assets focused and combine them in response lists; one response may publish several events and then continue into more dialogue.
 - Do not create multiple active managers in additive scenes unless you intentionally control which one survives.

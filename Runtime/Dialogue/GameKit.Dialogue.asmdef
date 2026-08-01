@@ -2,7 +2,9 @@
   "name": "GameKit.Dialogue",
   "rootNamespace": "GameKit.Dialogue",
   "references": [
-    "Unity.TextMeshPro"
+    "Unity.TextMeshPro",
+    "UnityEngine.UI",
+    "GameKit.Events"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
